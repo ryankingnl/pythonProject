@@ -10,20 +10,25 @@ dictionary = settings_manager.load_settings()
 vegas_rules = dictionary['vegas_rules']
 #draw_three = dictionary['draw_three']
 drag_and_drop = dictionary['drag_and_drop']
+#gamefont = myfont = pygame.font.SysFont('Raleway', 72, bold=True, italic=False)
 
 
 white = (255, 255, 255)
 black = (0, 0, 0)
 green = (0, 200, 0)
+screen_green = (21, 77, 50)
+dark_green = (2, 48, 32)
 blue = (50, 50, 190)
 red = (190, 50, 50)
 grey = (100, 100, 100)
+silver = (192, 192, 192)
 
 display_dimensions = (1100, 800)
 
 pygame.init()
 
 game_display = pygame.display.set_mode(display_dimensions)
+background_img = pygame.image.load("resources/background.png")
 
 # window Name
 pygame.display.set_caption('Solitaire')
@@ -58,9 +63,9 @@ def win_screen():
     start_menu_button = Button(display_dimensions, "Start Menu", (-250, 0), (200, 100), green, text_color=white, text_size=25, action="start_menu")
     buttons = [quit_button, play_again_button, start_menu_button]
     if vegas_rules:
-        win_text = Text(display_dimensions, (0, -200), "Game over. You scored "+str(total_score)+" points.", 60, black)
+        win_text = Text(display_dimensions, (0, -150), "Game over. You scored "+str(total_score)+" points.", 60, black)
     else:
-        win_text = Text(display_dimensions, (0, -200), "You Win!!!", 60, black)
+        win_text = Text(display_dimensions, (0, -150), "You Win!", 60, black)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -79,7 +84,7 @@ def win_screen():
                                 else:
                                     print("Button action: {} does not exist".format(button.action))
 
-        game_display.fill(white)
+        #game_display.fill(white)
 
         for button in buttons:
             button.display(game_display, pygame.mouse.get_pos())
@@ -118,7 +123,7 @@ def pause_screen():
                             else:
                                 print("Button action: {} does not exist".format(button.action))
 
-        game_display.fill(white)
+        game_display.fill(screen_green)
 
         for button in buttons:
             button.display(game_display, pygame.mouse.get_pos())
@@ -132,9 +137,14 @@ def pause_screen():
 def game_loop():
     global total_score
     check_settings()
-    undo_button = Button(display_dimensions, "Undo", (10, 10), (30, 30), grey, centered=False, text_size=11, action="undo")
-    restart_button = Button(display_dimensions, "Restart", (display_dimensions[0]-50, 10), (40, 30), grey, centered=False, text_size=10, action="restart")
+    undo_button = Button(display_dimensions, "Undo", (10, 10), (40, 30), white, centered=False, text_size=11, action="undo")
+    restart_button = Button(display_dimensions, "Restart", (display_dimensions[0]-50, 10), (40, 30), white, centered=False, text_size=10, action="restart")
     buttons = [undo_button, restart_button]
+
+    if vegas_rules:
+        total_score = -52
+    else:
+        total_score = 0
 
     deck = Deck()
     deck.load_cards()
@@ -212,10 +222,11 @@ def game_loop():
                     if event.button == 3:
                         deck.handle_right_click(mouse_pos)
 
-        game_display.fill([2, 48, 32])  # background color #023020
+        game_display.fill([21, 77, 50])
+        # game_display.fill([2, 48, 32])  # background color #023020
 
         for button in buttons:
-            button.display(game_display, pygame.mouse.get_pos())
+            button.display_game_button(game_display, pygame.mouse.get_pos())
 
         score_text = Text(display_dimensions, (0, -380), "Score: {}".format(total_score), 20, white)
         score_text.display(game_display)
@@ -269,7 +280,7 @@ def options_menu():
                     vegas_rules_checkbox.check_if_clicked(mouse_pos)
                     drag_and_drop_checkbox.check_if_clicked(mouse_pos)
 
-        game_display.fill(white)
+        game_display.fill(screen_green)
 
         title_text.display(game_display)
         about_text.display(game_display)
@@ -293,10 +304,11 @@ def options_menu():
 def start_menu():
     title = Text(display_dimensions, (0, -100), "Solitaire", 50, black)
 
-    play_button = Button(display_dimensions, "Play", (0, 0), (100, 50), blue, text_color=white, text_size=26, action="start_game")
+    play_button = Button(display_dimensions, "Play", (0, 0), (100, 50), blue, text_color=white,  action="start_game")
     quit_button = Button(display_dimensions, "Quit", (200, 0), (100, 50), red, text_color=white, action="quit")
     options_button = Button(display_dimensions, "Options", (-200, 0), (100, 50), grey, text_color=white, action="options")
-    buttons = [play_button, quit_button, options_button]
+    tutorial_button = Button(display_dimensions, "Tutorial", (0, 90), (100, 50), green, text_color=white, action="tutorial")
+    buttons = [play_button, quit_button, options_button, tutorial_button]
 
     global vegas_rules
     vegas_rules = settings_manager.load_settings()['vegas_rules']
@@ -315,13 +327,16 @@ def start_menu():
                                 quit_game()
                             elif button.action == "options":
                                 options_menu()
+                            elif button.action == "tutorial":
+                                tutorial.tutorial_screen()
                                 pass
                             else:
                                 print("Button action: {} does not exist".format(button.action))
 
-        game_display.fill(white)
+        #game_display.fill(silver)
+        game_display.blit(background_img, (0, 0))
 
-        title.display(game_display)
+        #title.display(game_display)
 
         for button in buttons:
             button.display(game_display, pygame.mouse.get_pos())

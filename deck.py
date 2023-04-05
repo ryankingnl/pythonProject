@@ -24,6 +24,7 @@ class Deck:
         self.selection_rect = None
         self.selection_color = (255, 255, 0)
         self.empty_color = (100, 100, 200)
+        self.dark_green = (2, 48, 32)
 
         # these attributes can be modified when undoing/redoing
         self.piles = piles
@@ -203,7 +204,7 @@ class Deck:
     def display(self, game_display):
         for pile in self.piles:
             if pile.pile_type == 'foundation' or pile.pile_type == 'deck' and len(pile.cards) == 0:
-                pygame.draw.rect(game_display, self.empty_color, [pile.x, pile.y, pile.card_width, pile.card_height])
+                pygame.draw.rect(game_display, self.dark_green, [pile.x, pile.y, pile.card_width, pile.card_height])
             for card in pile.cards:
                 if self.selection and self.selection_rect != None and card == self.selected_cards[0]:
                     pygame.draw.rect(game_display, self.selection_color, self.selection_rect)

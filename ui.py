@@ -4,7 +4,6 @@ from math import sqrt
 
 check_img = pygame.image.load(os.path.join('resources', 'check.png'))
 
-
 class Text:
     def __init__(self, display_dimensions, offsets, text, size, color, font="RobotoSlab-Regular", centered=True):
         self.display_width, self.display_height = display_dimensions
@@ -16,6 +15,7 @@ class Text:
         name_of_font = os.path.join('resources', 'fonts', font + '.ttf')
         self.font = pygame.font.Font(name_of_font, self.size)
         self.centered = centered
+
 
     def text_objects(self):
         text_surface = self.font.render(self.text, True, self.color)
@@ -36,7 +36,7 @@ class Text:
         x, y, width, height = button_info
 
         text_rect.center = (x + width//2, y + height//2)
-        game_display.blit(text_surface, text_rect)        
+        game_display.blit(text_surface, text_rect)
 
 
 class Button:
@@ -113,7 +113,24 @@ class Button:
 
         button_info = (self.x, self.y, self.width, self.height)
 
-        pygame.draw.rect(game_display, button_color, list(button_info))
+        pygame.draw.rect(game_display, button_color, list(button_info), border_radius=15)# border_radius=15
+
+        self.text_object.button_text_display(game_display, button_info)
+
+    def display_game_button(self, game_display, mouse_pos):
+        if self.enabled:
+            self.text_object.color = self.text_color
+            if self.check_for_mouse_over(mouse_pos):
+                button_color = self.highlight_color()
+            else:
+                button_color = self.color
+        else:
+            button_color = self.disabled_color
+            self.text_object.color = self.disabled_text_color
+
+        button_info = (self.x, self.y, self.width, self.height)
+
+        pygame.draw.rect(game_display, button_color, list(button_info))# border_radius=15
 
         self.text_object.button_text_display(game_display, button_info)
 
